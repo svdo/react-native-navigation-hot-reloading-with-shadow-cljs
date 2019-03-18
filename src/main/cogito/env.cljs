@@ -16,53 +16,69 @@
            ::id (-> this .-state .-id)
            :component-id (-> this .-props .-componentId)})
 
-        wrapper (crc #js {:getInitialState
-                          (fn []
-                            #js {:key key
-                                 :id (swap! id-seq-ref inc)})
+        wrapper 
+        (crc #js 
+              {:getInitialState
+               (fn []
+                 #js {:key key
+                      :id (swap! id-seq-ref inc)})
 
-                          :componentDidMount
-                          (fn []
-                            (this-as ^js this
-                              (-> (rnn/Navigation.events)
-                                  (.bindComponent this))
+               :componentDidMount
+               (fn []
+                 (this-as ^js this
+                          (-> (rnn/Navigation.events)
+                              (.bindComponent this))
 
-                              (swap! mounted-ref assoc-in [key (-> this .-state .-id)] this)))
+                          (swap! mounted-ref
+                                 assoc-in [key (-> this .-state .-id)] this)))
 
-                          :componentWillUnmount
-                          (fn []
-                            (this-as ^js this
-                              (swap! mounted-ref update key dissoc (-> this .-state .-id))))
+               :componentWillUnmount
+               (fn []
+                 (this-as ^js this
+                          (swap! mounted-ref
+                                 update key dissoc (-> this .-state .-id))))
 
 
-                          ;; FIXME: forward other lifecycles the same way
-                          :navigationButtonPressed
-                          (fn []
-                            (this-as this
-                              (let [{:keys [navigation-button-pressed]} (get @screens-ref key)
-                                    props (get-props this)]
-                                (js/console.log "navigationButtonPressed" key (boolean navigation-button-pressed) (pr-str props))
-                                (when navigation-button-pressed
-                                  (navigation-button-pressed props)))))
+               ;; FIXME: forward other lifecycles the same way
+               :navigationButtonPressed
+               (fn []
+                 (this-as this
+                          (let 
+                           [{:keys [navigation-button-pressed]} 
+                            (get @screens-ref key)
+                            
+                            props 
+                            (get-props this)]
+                            
+                            (js/console.log "navigationButtonPressed"
+                                            key
+                                            (boolean navigation-button-pressed) 
+                                            (pr-str props))
+                            (when navigation-button-pressed
+                              (navigation-button-pressed props)))))
 
-                          :componentDidAppear
-                          (fn []
-                            (this-as this
-                              (js/console.log "componentDidAppear" key)))
+               :componentDidAppear
+               (fn []
+                 (this-as this
+                          (js/console.log "componentDidAppear" key)))
 
-                          :componentDidDisappear
-                          (fn []
-                            (this-as this
-                              (js/console.log "componentDidDisappear" key)))
+               :componentDidDisappear
+               (fn []
+                 (this-as this
+                          (js/console.log "componentDidDisappear" key)))
 
-                          :render
-                          (fn []
-                            (this-as this
-                              (let [{:keys [render]} (get @screens-ref key)
-                                    props (get-props this)]
-                                (js/console.log "render" key (pr-str props))
-                                (-> (render props)
-                                    (r/as-element)))))})]
+               :render
+               (fn []
+                 (this-as this
+                          (let [{:keys [render]} 
+                                (get @screens-ref key)
+                                
+                                props
+                                (get-props this)]
+                            
+                            (js/console.log "render" key (pr-str props))
+                            (-> (render props)
+                                (r/as-element)))))})]
 
     (rnn/Navigation.registerComponent key (fn [] wrapper))))
 
