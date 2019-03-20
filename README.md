@@ -5,17 +5,10 @@ Goal
 ----
 Make Shadow-CLJS-based hot reloading work with [React Native Navigation][1].
 
-Status
-------
+Status: Done
+------------
 * Hot Reloading works.
-* React Native Navigation does not work (pressing button "press me" crashes app).
-
-Problem to be solved
---------------------
-The wrapper `reload-wrapper` in `app.cljs` is given a `componentId` prop by
-React Native Navigation when it is registered (`.registerComponent Navigation ...`).
-This componentId prop must be passed on to the wrapped component for 
-React Native Navigation to work.
+* React Native Navigation works.
 
 Development
 -----------
